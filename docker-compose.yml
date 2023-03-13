@@ -1,0 +1,82 @@
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.10.7-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    restart: always
+
+  parcel_delivery_apigate:
+    image: 'postgres:13.1-alpine'
+    container_name: db_apigate
+    environment:
+      - POSTGRES_DB=parcel_delivery_apigate
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    ports:
+      - "5433:5432"
+  parcel_delivery_order:
+    image: 'postgres:13.1-alpine'
+    container_name: db_order
+    environment:
+      - POSTGRES_DB=parcel_delivery_order
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    ports:
+      - "5434:5432"
+  parcel_delivery_user:
+    image: 'postgres:13.1-alpine'
+    container_name: db_user
+    environment:
+      - POSTGRES_DB=parcel_delivery_user
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    ports:
+      - "5435:5432"
+
+  api-gate:
+    container_name: api-gate
+    restart: always
+    image: api-gate
+    depends_on:
+      - parcel_delivery_apigate
+      - rabbitmq
+    environment:
+      - DATABASE_HOST=parcel_delivery_apigate
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - PORT=5432
+      - RABBIT_HOST=rabbitmq
+    ports:
+      - "8443:8443"
+  order:
+    container_name: order
+    restart: always
+    image: order
+    depends_on:
+      - parcel_delivery_order
+      - rabbitmq
+    environment:
+      - DATABASE_HOST=parcel_delivery_order
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - PORT=5432
+      - RABBIT_HOST=rabbitmq
+    ports:
+      - "8444:8444"
+  user:
+    container_name: user
+    restart: always
+    image: user
+    depends_on:
+      - parcel_delivery_user
+      - rabbitmq
+    environment:
+      - DATABASE_HOST=parcel_delivery_user
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - PORT=5432
+      - RABBIT_HOST=rabbitmq
+    ports:
+      - "8445:8445"

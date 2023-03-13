@@ -1,0 +1,51 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet id="1.0.0" author="nikita.kirichenkov">
+        <createTable tableName="orders">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT" autoIncrement="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="courier" type="BIGINT" autoIncrement="false">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="closed" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="destination" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="details" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status" type="VARCHAR(25)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="coordinate" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <createTable tableName="couriers">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT" autoIncrement="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(25)" autoIncrement="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

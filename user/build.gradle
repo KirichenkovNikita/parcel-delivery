@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.1.4.RELEASE'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'com.palantir.docker' version '0.22.1'
+}
+
+group = 'com.guavapay'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+docker {
+    name project.name
+    dockerfile file('/src/docker/DockerFile')
+    copySpec.from(jar).rename(".*", "app.jar")
+    buildArgs(['JAR_FILE': 'app.jar'])
+}
+
+dependencies {
+    implementation project(':data-lib')
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.amqp:spring-rabbit'
+    implementation 'org.liquibase:liquibase-core'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    runtimeOnly 'org.postgresql:postgresql'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.guavapay.user.UserApplication'
+        )
+    }
+}
